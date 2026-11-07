@@ -3,195 +3,186 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QualityHub - Dynamic E-Commerce & QA Testing Platform</title>
+  <title>QualityHub - QA Software Testing Platform for E-Commerce Sites</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Navigation Bar -->
-  <header class="navbar">
-    <div class="container nav-inner">
-      <div class="brand" onclick="switchView('store')">
-        <span class="brand-dot"></span>
-        <span class="brand-title">QualityHub</span>
-        <span class="brand-tag">Fullstack QA Platform</span>
+  <!-- Top Navigation Bar -->
+  <header class="top-header">
+    <div class="container header-inner">
+      <div class="brand-group" onclick="switchPlatformTab('studio')">
+        <div class="brand-icon">Q</div>
+        <div>
+          <span class="brand-text">QualityHub</span>
+          <span class="platform-pill">E-Commerce QA Studio</span>
+        </div>
       </div>
 
       <nav class="nav-tabs">
-        <button class="nav-tab active" data-tab="store">E-Commerce Store</button>
-        <button class="nav-tab" data-tab="qa">QA Test Hub</button>
+        <button class="tab-btn active" data-tab="studio">Test Studio</button>
+        <button class="tab-btn" data-tab="editor">JSON Scenarios</button>
+        <button class="tab-btn" data-tab="defects">Defect Tracker</button>
       </nav>
 
-      <div class="nav-actions">
-        <select id="persona-select" class="persona-select" title="Switch QA Persona">
-          <option value="standard_user">Persona: Standard User</option>
-          <option value="locked_out_user">Persona: Locked Out User</option>
-          <option value="problem_user">Persona: Problematic User</option>
-        </select>
-
-        <button id="cart-open-btn" class="cart-btn" data-test="shopping-cart-button">
-          <span>Cart</span>
-          <span id="cart-count-badge" class="cart-badge">0</span>
-        </button>
+      <div class="header-right">
+        <div class="target-badge">
+          <span class="status-dot"></span>
+          <span>Engine: <strong>Playwright + TypeScript</strong></span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- STOREFRONT VIEW -->
-  <main id="store-view" class="container">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <div>
-          <h1 class="hero-title">Dynamic E-Commerce Test Environment</h1>
-          <p class="hero-sub">
-            A production-ready fullstack test target built for QA engineers. Browse catalog items, test add-to-cart workflows, simulate edge-case checkout forms, and verify real-time REST API responses.
-          </p>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat-box">
-            <div class="hero-stat-label">API Health</div>
-            <div class="hero-stat-val aqua">99.9%</div>
-          </div>
-          <div class="hero-stat-box">
-            <div class="hero-stat-label">Active Items</div>
-            <div id="hero-cart-count" class="hero-stat-val">0</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Controls Bar -->
-    <section class="controls-bar">
-      <div class="search-wrapper">
-        <input type="text" id="search-input" class="search-input" placeholder="Search catalog by name or keyword..." data-test="search-input" />
+  <!-- Target Environment Configuration Strip -->
+  <section class="target-workspace-bar">
+    <div class="container workspace-inner">
+      <div class="url-input-group">
+        <span class="url-label">Target E-Commerce Site</span>
+        <input type="text" id="target-url-input" class="url-input" value="https://www.saucedemo.com" placeholder="https://your-store.com" />
       </div>
 
-      <div class="category-pills">
-        <button class="cat-pill active" data-category="All">All</button>
-        <button class="cat-pill" data-category="Audio">Audio</button>
-        <button class="cat-pill" data-category="Workstation">Workstation</button>
-        <button class="cat-pill" data-category="Wearables">Wearables</button>
-        <button class="cat-pill" data-category="Accessories">Accessories</button>
-      </div>
-
-      <div>
-        <select id="sort-select" class="sort-select">
-          <option value="default">Sort by: Featured</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-      </div>
-    </section>
-
-    <!-- Products Grid -->
-    <section id="products-grid" class="products-grid">
-      <!-- Dynamic Products Injected via app.js -->
-    </section>
-  </main>
-
-  <!-- QA TESTING CENTER VIEW -->
-  <main id="qa-view" class="container qa-view" style="display: none;">
-    <section class="qa-header">
-      <div class="qa-title-group">
-        <h2>QA Automation & Execution Center</h2>
-        <p>Trigger live dynamic assertions, inspect API responses, and run end-to-end regression test suites against this service.</p>
-      </div>
-      <div class="qa-actions">
-        <button id="btn-run-all-qa" class="btn-run-all">
-          <span>▶ Run All QA Scenarios</span>
-        </button>
-        <button id="btn-run-smoke-qa" class="btn-run-smoke">
-          Run @smoke Only
-        </button>
-        <button id="btn-run-playwright" class="btn-run-smoke" title="Run Playwright CLI against the app">
-          Run Playwright Suite
-        </button>
-      </div>
-    </section>
-
-    <!-- Metrics Cards Grid -->
-    <section class="qa-metrics-grid">
-      <div class="qa-metric-card">
-        <div class="metric-title">Pass Rate</div>
-        <div id="metric-pass-rate" class="metric-num" style="color: var(--aqua-primary);">100%</div>
-        <div class="metric-sub">Across active scenarios</div>
-      </div>
-      <div class="qa-metric-card">
-        <div class="metric-title">Scenarios Passed</div>
-        <div id="metric-tests-count" class="metric-num">7/7</div>
-        <div class="metric-sub">All assertions verified</div>
-      </div>
-      <div class="qa-metric-card">
-        <div class="metric-title">Execution Latency</div>
-        <div id="metric-duration" class="metric-num">38ms</div>
-        <div class="metric-sub">Average roundtrip time</div>
-      </div>
-      <div class="qa-metric-card">
-        <div class="metric-title">Defect Flags</div>
-        <div id="metric-defects" class="metric-num">0</div>
-        <div class="metric-sub">No blocking issues found</div>
-      </div>
-    </section>
-
-    <!-- Console Output for Playwright -->
-    <pre id="playwright-output" style="display: none; background: var(--bg-beige); border: 1px solid var(--border-beige); padding: 16px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: monospace; color: var(--text-charcoal); margin-bottom: 24px; max-height: 240px; overflow-y: auto; white-space: pre-wrap;"></pre>
-
-    <!-- Scenarios List -->
-    <section id="scenarios-container" class="scenarios-list">
-      <!-- Dynamic QA Scenarios Injected via app.js -->
-    </section>
-  </main>
-
-  <!-- Cart & Checkout Modal Backdrop -->
-  <div id="cart-backdrop" class="cart-modal-backdrop">
-    <div class="cart-drawer">
-      <div class="drawer-header">
-        <h3 class="drawer-title">Test Shopping Cart</h3>
-        <button id="cart-close-btn" class="close-btn" aria-label="Close cart">&times;</button>
-      </div>
-
-      <div class="drawer-body">
-        <div id="drawer-items-list">
-          <!-- Cart items injected via app.js -->
-        </div>
-
-        <div style="margin-top: auto;">
-          <form id="checkout-form" class="checkout-form">
-            <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-black); margin-bottom: 4px;">Simulate Checkout</h4>
-            <input type="text" id="input-first-name" class="form-input" placeholder="First Name (e.g. Ada)" data-test="firstName" required />
-            <input type="text" id="input-last-name" class="form-input" placeholder="Last Name (e.g. Lovelace)" data-test="lastName" required />
-            <input type="text" id="input-postal-code" class="form-input" placeholder="Postal Code (e.g. 520001)" data-test="postalCode" required />
-            
-            <div id="checkout-alert" class="checkout-alert"></div>
-
-            <button type="submit" id="btn-checkout-submit" class="btn-checkout" data-test="checkout-submit">
-              Confirm Test Order
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div class="drawer-footer">
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span id="drawer-subtotal">$0.00</span>
-        </div>
-        <div class="summary-row">
-          <span>Tier Discount</span>
-          <span id="drawer-discount">-$0.00</span>
-        </div>
-        <div class="summary-row summary-total">
-          <span>Total</span>
-          <span id="drawer-total">$0.00</span>
-        </div>
+      <div class="preset-targets">
+        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); align-self: center; margin-right: 4px;">Presets:</span>
+        <button class="preset-btn active" data-url="https://www.saucedemo.com">SauceDemo Store</button>
+        <button class="preset-btn" data-url="https://restful-booker.herokuapp.com">Restful-Booker API</button>
+        <button class="preset-btn" data-url="http://localhost:3000">Local Testbed (:3000)</button>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- TAB 1: E-COMMERCE TEST STUDIO -->
+  <main id="view-studio" class="container">
+    <!-- KPI Summary Metrics Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Pass Rate</div>
+        <div id="kpi-pass-rate" class="kpi-val aqua">100%</div>
+        <div class="kpi-sub">Across all e-commerce flows</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Scenarios Verified</div>
+        <div id="kpi-cases-count" class="kpi-val">12/12</div>
+        <div class="kpi-sub">Zero blocking test failures</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Average Latency</div>
+        <div id="kpi-duration" class="kpi-val">24ms</div>
+        <div class="kpi-sub">Target assertion roundtrip</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Open Defects</div>
+        <div id="kpi-defects-count" class="kpi-val">1</div>
+        <div class="kpi-sub">Tracked in Defect Manager</div>
+      </div>
+    </section>
+
+    <!-- Action & Filter Bar -->
+    <section class="action-bar">
+      <div class="filter-pills">
+        <button class="filter-pill active" data-cat="All">All Suites</button>
+        <button class="filter-pill" data-cat="Checkout">Checkout & Cart</button>
+        <button class="filter-pill" data-cat="Authentication">Auth & Personas</button>
+        <button class="filter-pill" data-cat="Catalog">Catalog & Search</button>
+        <button class="filter-pill" data-cat="API">REST APIs</button>
+        <button class="filter-pill" data-cat="@smoke">@smoke Only</button>
+      </div>
+
+      <div class="run-actions">
+        <button id="btn-run-all-suites" class="btn-primary-run">
+          <span>▶ Run All Test Suites</span>
+        </button>
+        <button id="btn-run-smoke-suites" class="btn-secondary-run">
+          Run @smoke Only
+        </button>
+        <button id="btn-run-playwright-cli" class="btn-secondary-run" title="Spawns headless browser runner">
+          Run Playwright Engine
+        </button>
+      </div>
+    </section>
+
+    <!-- Two-Column Studio Layout -->
+    <section class="studio-layout">
+      <!-- Left Column: Test Suites & Scenarios -->
+      <div id="suites-container" class="suites-column">
+        <!-- Rendered via app.js -->
+      </div>
+
+      <!-- Right Column: Step Inspector & Live Execution Console -->
+      <div class="inspector-column">
+        <!-- Step Inspector Panel -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div>
+              <h3 id="inspector-title" class="panel-title">Step-by-Step Assertion Inspector</h3>
+              <div id="inspector-meta" style="font-size: 0.75rem; color: var(--text-grey); margin-top: 2px;">Select a test case to inspect steps</div>
+            </div>
+          </div>
+          <div id="inspector-steps" class="panel-body">
+            <!-- Steps injected via app.js -->
+          </div>
+        </div>
+
+        <!-- Live Console Log Panel -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <h3 class="panel-title">Live Execution Console</h3>
+            <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted);">Real-time stream</span>
+          </div>
+          <div class="panel-body">
+            <pre id="live-console-log" class="console-log">[QualityHub Ready] Target set to https://www.saucedemo.com
+Ready to execute e-commerce QA test suites or launch Playwright engine.</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- TAB 2: DYNAMIC JSON SCENARIOS BUILDER -->
+  <main id="view-editor" class="container editor-view">
+    <div class="editor-wrapper">
+      <div class="editor-toolbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-black);">Scenario File:</span>
+          <select id="json-file-select" class="preset-btn" style="padding: 6px 14px; font-weight: 600;">
+            <option value="ui">scenarios/ui.json (E-Commerce UI Flows)</option>
+            <option value="api">scenarios/api.json (REST API Endpoints)</option>
+          </select>
+        </div>
+        <button id="btn-save-json" class="btn-primary-run" style="padding: 6px 18px; font-size: 0.78rem;">
+          Save Scenario Changes
+        </button>
+      </div>
+      <textarea id="json-editor-textarea" class="json-textarea" spellcheck="false"></textarea>
+    </div>
+  </main>
+
+  <!-- TAB 3: DEFECT TRACKER -->
+  <main id="view-defects" class="container defect-view">
+    <div style="margin-bottom: 20px;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-black); letter-spacing: -0.02em;">E-Commerce QA Defect Log</h2>
+      <p style="font-size: 0.85rem; color: var(--text-grey);">Track and audit defects identified across automated scenario runs on target stores.</p>
+    </div>
+
+    <table class="defect-table">
+      <thead>
+        <tr>
+          <th>Defect ID</th>
+          <th>Test Case</th>
+          <th>Anomaly Summary</th>
+          <th>Severity</th>
+          <th>Target URL</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="defects-tbody">
+        <!-- Injected via app.js -->
+      </tbody>
+    </table>
+  </main>
 
   <!-- Toast Notification -->
-  <div id="toast" class="toast">Action completed</div>
+  <div id="toast-msg" class="toast-notice">Action complete</div>
 
   <script src="app.js"></script>
 </body>
