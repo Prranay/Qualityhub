@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QualityHub - QA Software Testing Platform for E-Commerce Sites</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-header">
+    <div class="container header-inner">
+      <div class="brand-group" onclick="switchPlatformTab('studio')">
+        <div class="brand-icon">Q</div>
+        <div>
+          <span class="brand-text">QualityHub</span>
+          <span class="platform-pill">E-Commerce QA Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-tab="studio">Test Studio</button>
+        <button class="tab-btn" data-tab="editor">JSON Scenarios</button>
+        <button class="tab-btn" data-tab="defects">Defect Tracker</button>
+      </nav>
+
+      <div class="header-right">
+        <div class="target-badge">
+          <span class="status-dot"></span>
+          <span>Engine: <strong>Playwright + TypeScript</strong></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Target Environment Configuration Strip -->
+  <section class="target-workspace-bar">
+    <div class="container workspace-inner">
+      <div class="url-input-group">
+        <span class="url-label">Target E-Commerce Site</span>
+        <input type="text" id="target-url-input" class="url-input" value="https://www.saucedemo.com" placeholder="https://your-store.com" />
+      </div>
+
+      <div class="preset-targets">
+        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); align-self: center; margin-right: 4px;">Presets:</span>
+        <button class="preset-btn active" data-url="https://www.saucedemo.com">SauceDemo Store</button>
+        <button class="preset-btn" data-url="https://restful-booker.herokuapp.com">Restful-Booker API</button>
+        <button class="preset-btn" data-url="http://localhost:3000">Local Testbed (:3000)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 1: E-COMMERCE TEST STUDIO -->
+  <main id="view-studio" class="container">
+    <!-- KPI Summary Metrics Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Pass Rate</div>
+        <div id="kpi-pass-rate" class="kpi-val aqua">100%</div>
+        <div class="kpi-sub">Across all e-commerce flows</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Scenarios Verified</div>
+        <div id="kpi-cases-count" class="kpi-val">12/12</div>
+        <div class="kpi-sub">Zero blocking test failures</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Average Latency</div>
+        <div id="kpi-duration" class="kpi-val">24ms</div>
+        <div class="kpi-sub">Target assertion roundtrip</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Open Defects</div>
+        <div id="kpi-defects-count" class="kpi-val">1</div>
+        <div class="kpi-sub">Tracked in Defect Manager</div>
+      </div>
+    </section>
+
+    <!-- Action & Filter Bar -->
+    <section class="action-bar">
+      <div class="filter-pills">
+        <button class="filter-pill active" data-cat="All">All Suites</button>
+        <button class="filter-pill" data-cat="Checkout">Checkout & Cart</button>
+        <button class="filter-pill" data-cat="Authentication">Auth & Personas</button>
+        <button class="filter-pill" data-cat="Catalog">Catalog & Search</button>
+        <button class="filter-pill" data-cat="API">REST APIs</button>
+        <button class="filter-pill" data-cat="@smoke">@smoke Only</button>
+      </div>
+
+      <div class="run-actions">
+        <button id="btn-run-all-suites" class="btn-primary-run">
+          <span>▶ Run All Test Suites</span>
+        </button>
+        <button id="btn-run-smoke-suites" class="btn-secondary-run">
+          Run @smoke Only
+        </button>
+        <button id="btn-run-playwright-cli" class="btn-secondary-run" title="Spawns headless browser runner">
+          Run Playwright Engine
+        </button>
+      </div>
+    </section>
+
+    <!-- Two-Column Studio Layout -->
+    <section class="studio-layout">
+      <!-- Left Column: Test Suites & Scenarios -->
+      <div id="suites-container" class="suites-column">
+        <!-- Rendered via app.js -->
+      </div>
+
+      <!-- Right Column: Step Inspector & Live Execution Console -->
+      <div class="inspector-column">
+        <!-- Step Inspector Panel -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div>
+              <h3 id="inspector-title" class="panel-title">Step-by-Step Assertion Inspector</h3>
+              <div id="inspector-meta" style="font-size: 0.75rem; color: var(--text-grey); margin-top: 2px;">Select a test case to inspect steps</div>
+            </div>
+          </div>
+          <div id="inspector-steps" class="panel-body">
+            <!-- Steps injected via app.js -->
+          </div>
+        </div>
+
+        <!-- Live Console Log Panel -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <h3 class="panel-title">Live Execution Console</h3>
+            <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted);">Real-time stream</span>
+          </div>
+          <div class="panel-body">
+            <pre id="live-console-log" class="console-log">[QualityHub Ready] Target set to https://www.saucedemo.com
+Ready to execute e-commerce QA test suites or launch Playwright engine.</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- TAB 2: DYNAMIC JSON SCENARIOS BUILDER -->
+  <main id="view-editor" class="container editor-view">
+    <div class="editor-wrapper">
+      <div class="editor-toolbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-black);">Scenario File:</span>
+          <select id="json-file-select" class="preset-btn" style="padding: 6px 14px; font-weight: 600;">
+            <option value="ui">scenarios/ui.json (E-Commerce UI Flows)</option>
+            <option value="api">scenarios/api.json (REST API Endpoints)</option>
+          </select>
+        </div>
+        <button id="btn-save-json" class="btn-primary-run" style="padding: 6px 18px; font-size: 0.78rem;">
+          Save Scenario Changes
+        </button>
+      </div>
+      <textarea id="json-editor-textarea" class="json-textarea" spellcheck="false"></textarea>
+    </div>
+  </main>
+
+  <!-- TAB 3: DEFECT TRACKER -->
+  <main id="view-defects" class="container defect-view">
+    <div style="margin-bottom: 20px;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-black); letter-spacing: -0.02em;">E-Commerce QA Defect Log</h2>
+      <p style="font-size: 0.85rem; color: var(--text-grey);">Track and audit defects identified across automated scenario runs on target stores.</p>
+    </div>
+
+    <table class="defect-table">
+      <thead>
+        <tr>
+          <th>Defect ID</th>
+          <th>Test Case</th>
+          <th>Anomaly Summary</th>
+          <th>Severity</th>
+          <th>Target URL</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="defects-tbody">
+        <!-- Injected via app.js -->
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="toast-notice">Action complete</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
