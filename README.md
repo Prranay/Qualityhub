@@ -1,53 +1,66 @@
-# QualityHub
+# QualityHub – E-Commerce QA Software Testing Platform & Automation Engine
 
-JSON-driven UI and API test automation (Playwright + TypeScript). Add a test by editing JSON, not code.
-Targets: [SauceDemo](https://www.saucedemo.com) (UI) and [Restful-Booker](https://restful-booker.herokuapp.com) (API).
+> **Live Deployment Link:** [https://prranay.github.io/Qualityhub/](https://prranay.github.io/Qualityhub/)
 
-## Run
+QualityHub is a specialized, fullstack **QA Software Testing Custom Platform** designed for testing e-commerce websites and REST APIs. Built with **Playwright**, **TypeScript**, and a declarative **JSON-driven engine**, it allows QA engineers to author and run automated UI and API tests by modifying JSON rather than writing repetitive test code.
+
+Targets: [SauceDemo](https://www.saucedemo.com) (Live E-Commerce Store) and [Restful-Booker](https://restful-booker.herokuapp.com) (E-Commerce REST API).
+
+---
+
+## Live Features & Capabilities
+
+- 🎯 **Target E-Commerce Environment Bar**: Switch between live e-commerce stores (`https://www.saucedemo.com`), API endpoints, or custom URLs.
+- 🛒 **Cart & Multi-Step Checkout Flow Suite**: Automated validation for adding items, cart badge count updates, mandatory shipping address boundary checks, and order confirmation dispatch.
+- 🔐 **Customer Auth & Persona Security Suite**: Standard customer logins, locked-out persona security blocks, invalid credentials handling, and empty form validation.
+- 🔍 **Catalog Sorting & Inventory Suite**: DOM verification for inventory cards, price-sorting reordering (Low to High), and item details routing.
+- ⚡ **E-Commerce REST API & Booking Lifecycle Suite**: Complete CRUD verification (POST auth token $\rightarrow$ POST booking $\rightarrow$ GET by ID $\rightarrow$ PATCH $\rightarrow$ DELETE $\rightarrow$ 404 assertion).
+- 🔍 **Step-by-Step Assertion Inspector**: Real-time inspection of actions (`goto`, `fill`, `click`, `expectText`, `GET`, `POST`), target selectors, expected vs. actual HTTP status codes, and execution latency.
+- ⚙️ **Dynamic JSON Scenarios Studio**: In-browser editor to view and customize scenario files (`scenarios/ui.json`, `scenarios/api.json`) dynamically.
+- 🐞 **Defect Tracking & Audit Log**: Log, track, and categorize defects (`DEF-101`) linked directly to failing steps and target URLs.
+
+---
+
+## Quick Start (Local Run)
+
 ```bash
+# 1. Install dependencies & Playwright Chromium browser
 npm ci && npx playwright install chromium
-cp .env.example .env                  # public demo credentials; never commit real ones
-npm test                              # everything
-npm run smoke                         # @smoke only
-npx playwright test --grep "Login"    # one group
+
+# 2. Configure demo credentials
+cp .env.example .env
+
+# 3. Start the QualityHub QA Platform locally
+npm start
+# -> Open http://localhost:3000 in your browser
+
+# 4. Run automated Playwright tests
+npm test                              # Run all 10 tests
+npm run smoke                         # Run @smoke tagged tests only
+npx playwright test --grep "Login"    # Run single group
 npm run report && npx playwright show-report
 ```
-Open `dashboard/index.html` through any static server (e.g. `npx serve dashboard`) to see the dashboard.
-Point at another environment with `UI_URL` / `API_URL`.
 
-## How the dynamic part works
-`scenarios/*.json` -> `tests/*.spec.ts` generate one Playwright test per scenario -> `engine/*.ts` runs its steps.
+---
 
-| UI step | Fields |
+## How the Dynamic Engine Works
+
+`scenarios/*.json` $\rightarrow$ `tests/*.spec.ts` generate one Playwright test per scenario $\rightarrow$ `engine/*.ts` runs its steps.
+
+| UI Step Action | Supported Attributes |
 |---|---|
-| `goto`, `click`, `fill`, `expectUrl`, `expectVisible`, `expectText`, `call` (reuse a flow) | `by` (testid, placeholder, text, `role` as `button\|Name`), `target`, `value`, `to` |
+| `goto`, `click`, `fill`, `expectUrl`, `expectVisible`, `expectText`, `call` (reusable flow) | `by` (`testid`, `placeholder`, `text`, `role` as `button\|Name`), `target`, `value`, `to` |
 
-| API step | Fields |
+| API Step Action | Supported Attributes |
 |---|---|
-| any of GET/POST/PUT/PATCH/DELETE | `path`, `body`, `headers`, `status`, `keys` (must exist), `equals` (must match), `save` (store a response field, reuse as `{{name}}`) |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `path`, `body`, `headers`, `status`, `keys` (must exist), `equals` (must match), `save` (stores response field, reuse as `{{name}}`) |
 
-Built-ins: `{{rand}}` (unique per run), `{{env.NAME}}` (from environment). Add `"tags": ["@smoke"]` and `"bug": "BUG-12"` to any scenario.
+- **Built-in Variables**: `{{rand}}` (unique dynamic UUID slice per run), `{{env.NAME}}` (secure environment substitution).
+- **Data Chaining**: Capture generated IDs via `"save": { "id": "bookingid" }` and inject into subsequent requests as `/booking/{{id}}`.
 
-## Security choices
-Secrets come from env/CI secrets; a missing one stops the run. Scenario files can only trigger the allow-listed actions, and
-substitution walks values instead of building JSON text, so data cannot break out. CI uses read-only permissions.
+---
 
-## Status
-Done: UI engine, API engine, tags, env config, JSON report -> dashboard, CI.
-Verified: types compile, UI tests generate (7), API tests run green (3) and fail correctly on bad input,
-using a local stand-in for Restful-Booker. **Not yet run:** the UI tests in a real browser and CI on GitHub. Do both first.
+## CI/CD & GitHub Pages Deployment
 
-## Remaining steps (do in this order)
-1. **First real run.** Run `npm test` locally. Fix any selector or text that differs on the live sites. Put a failure you find
-   into `scenarios/*.json` with a `"bug"` ID.
-2. **GitHub.** Push, add secrets `SAUCE_PASS`, `BOOKER_USER`, `BOOKER_PASS`, and confirm the PR smoke job and the nightly job run.
-3. **Pages.** Add a deploy step (`actions/deploy-pages`) for `dashboard/` + `playwright-report/` for a live recruiter link.
-4. **Accessibility.** `npm i -D @axe-core/playwright`; add an `a11y` action in `engine/ui.ts` that expects `violations` to be empty.
-5. **Performance.** Add `perf/search.js` (k6): 20 virtual users for 30s on search and checkout, thresholds `p(95)<800ms`, error rate under 1%.
-6. **Security.** Run OWASP ZAP baseline against Juice Shop (`zaproxy/action-baseline`) and document 3 findings.
-7. **Manual QA docs.** `docs/`: test strategy (2 pages), 50 test cases, traceability matrix, 10+ bug reports.
-8. **Polish.** Docker (`mcr.microsoft.com/playwright` image), architecture diagram, 3-minute demo video.
-
-## Resume bullet
-Built a JSON-driven test automation framework (Playwright, TypeScript) generating UI and API tests from scenario files, with data chaining,
-tag-based smoke/regression runs, GitHub Actions CI and a results dashboard linking failures to defect IDs.
+- **Automated CI Workflow** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): Runs `@smoke` tests on pull requests and nightly full regression with artifact generation.
+- **GitHub Pages Deployment** ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)): Automatically deploys the QA Platform to [https://prranay.github.io/Qualityhub/](https://prranay.github.io/Qualityhub/) on every push to `main`.
