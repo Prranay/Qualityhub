@@ -1,0 +1,22 @@
+{
+  "Booking lifecycle": [
+    { "title": "create, read, update and delete a booking", "tags": ["@smoke"], "steps": [
+      { "name": "log in", "method": "POST", "path": "/auth", "status": 200, "keys": ["token"], "save": { "token": "token" },
+        "body": { "username": "{{env.BOOKER_USER}}", "password": "{{env.BOOKER_PASS}}" } },
+      { "name": "create", "method": "POST", "path": "/booking", "status": 200, "keys": ["bookingid"], "save": { "id": "bookingid" },
+        "body": { "firstname": "Ada-{{rand}}", "lastname": "Lovelace", "totalprice": 120, "depositpaid": true,
+                  "bookingdates": { "checkin": "2026-12-01", "checkout": "2026-12-05" }, "additionalneeds": "Breakfast" } },
+      { "name": "read", "method": "GET", "path": "/booking/{{id}}", "status": 200, "equals": { "firstname": "Ada-{{rand}}" } },
+      { "name": "update", "method": "PATCH", "path": "/booking/{{id}}", "status": 200,
+        "headers": { "Cookie": "token={{token}}" }, "body": { "firstname": "Grace-{{rand}}" }, "equals": { "firstname": "Grace-{{rand}}" } },
+      { "name": "delete", "method": "DELETE", "path": "/booking/{{id}}", "status": 201, "headers": { "Cookie": "token={{token}}" } },
+      { "name": "read after delete", "method": "GET", "path": "/booking/{{id}}", "status": 404 } ] }
+  ],
+  "Auth": [
+    { "title": "bad credentials are rejected", "tags": ["@smoke"], "steps": [
+      { "name": "log in", "method": "POST", "path": "/auth", "status": 200,
+        "body": { "username": "nobody", "password": "wrong" }, "equals": { "reason": "Bad credentials" } } ] },
+    { "title": "delete without a token is forbidden", "tags": ["@regression"], "steps": [
+      { "name": "delete", "method": "DELETE", "path": "/booking/1", "status": 403 } ] }
+  ]
+}

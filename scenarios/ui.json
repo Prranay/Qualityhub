@@ -1,0 +1,57 @@
+{
+  "flows": {
+    "login": [
+      { "do": "goto", "to": "/" },
+      { "do": "fill", "by": "testid", "target": "username", "value": "standard_user" },
+      { "do": "fill", "by": "testid", "target": "password", "value": "{{env.SAUCE_PASS}}" },
+      { "do": "click", "by": "testid", "target": "login-button" }
+    ]
+  },
+  "groups": {
+    "Login": [
+      { "title": "valid user reaches inventory", "tags": ["@smoke"], "steps": [
+        { "do": "call", "to": "login" }, { "do": "expectUrl", "value": "inventory" } ] },
+      { "title": "locked out user sees an error", "tags": ["@regression"], "steps": [
+        { "do": "goto", "to": "/" },
+        { "do": "fill", "by": "testid", "target": "username", "value": "locked_out_user" },
+        { "do": "fill", "by": "testid", "target": "password", "value": "{{env.SAUCE_PASS}}" },
+        { "do": "click", "by": "testid", "target": "login-button" },
+        { "do": "expectText", "by": "testid", "target": "error", "value": "locked out" } ] },
+      { "title": "wrong password is rejected", "tags": ["@regression"], "steps": [
+        { "do": "goto", "to": "/" },
+        { "do": "fill", "by": "testid", "target": "username", "value": "standard_user" },
+        { "do": "fill", "by": "testid", "target": "password", "value": "wrong" },
+        { "do": "click", "by": "testid", "target": "login-button" },
+        { "do": "expectText", "by": "testid", "target": "error", "value": "do not match" } ] },
+      { "title": "empty username is rejected", "tags": ["@regression"], "steps": [
+        { "do": "goto", "to": "/" },
+        { "do": "click", "by": "testid", "target": "login-button" },
+        { "do": "expectText", "by": "testid", "target": "error", "value": "Username is required" } ] }
+    ],
+    "Cart and checkout": [
+      { "title": "adding an item updates the cart badge", "tags": ["@smoke"], "steps": [
+        { "do": "call", "to": "login" },
+        { "do": "click", "by": "testid", "target": "add-to-cart-sauce-labs-backpack" },
+        { "do": "expectText", "by": "testid", "target": "shopping-cart-badge", "value": "1" } ] },
+      { "title": "user completes a checkout", "tags": ["@smoke"], "steps": [
+        { "do": "call", "to": "login" },
+        { "do": "click", "by": "testid", "target": "add-to-cart-sauce-labs-backpack" },
+        { "do": "click", "by": "testid", "target": "shopping-cart-link" },
+        { "do": "click", "by": "testid", "target": "checkout" },
+        { "do": "fill", "by": "testid", "target": "firstName", "value": "Ada" },
+        { "do": "fill", "by": "testid", "target": "lastName", "value": "Lovelace" },
+        { "do": "fill", "by": "testid", "target": "postalCode", "value": "520001" },
+        { "do": "click", "by": "testid", "target": "continue" },
+        { "do": "click", "by": "testid", "target": "finish" },
+        { "do": "expectText", "by": "testid", "target": "complete-header", "value": "Thank you" } ] },
+      { "title": "checkout requires a postal code", "tags": ["@regression"], "steps": [
+        { "do": "call", "to": "login" },
+        { "do": "click", "by": "testid", "target": "shopping-cart-link" },
+        { "do": "click", "by": "testid", "target": "checkout" },
+        { "do": "fill", "by": "testid", "target": "firstName", "value": "Ada" },
+        { "do": "fill", "by": "testid", "target": "lastName", "value": "Lovelace" },
+        { "do": "click", "by": "testid", "target": "continue" },
+        { "do": "expectText", "by": "testid", "target": "error", "value": "Postal Code is required" } ] }
+    ]
+  }
+}
