@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QualityHub - Dynamic E-Commerce & QA Testing Platform</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="brand" onclick="switchView('store')">
+        <span class="brand-dot"></span>
+        <span class="brand-title">QualityHub</span>
+        <span class="brand-tag">Fullstack QA Platform</span>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="store">E-Commerce Store</button>
+        <button class="nav-tab" data-tab="qa">QA Test Hub</button>
+      </nav>
+
+      <div class="nav-actions">
+        <select id="persona-select" class="persona-select" title="Switch QA Persona">
+          <option value="standard_user">Persona: Standard User</option>
+          <option value="locked_out_user">Persona: Locked Out User</option>
+          <option value="problem_user">Persona: Problematic User</option>
+        </select>
+
+        <button id="cart-open-btn" class="cart-btn" data-test="shopping-cart-button">
+          <span>Cart</span>
+          <span id="cart-count-badge" class="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STOREFRONT VIEW -->
+  <main id="store-view" class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div>
+          <h1 class="hero-title">Dynamic E-Commerce Test Environment</h1>
+          <p class="hero-sub">
+            A production-ready fullstack test target built for QA engineers. Browse catalog items, test add-to-cart workflows, simulate edge-case checkout forms, and verify real-time REST API responses.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat-box">
+            <div class="hero-stat-label">API Health</div>
+            <div class="hero-stat-val aqua">99.9%</div>
+          </div>
+          <div class="hero-stat-box">
+            <div class="hero-stat-label">Active Items</div>
+            <div id="hero-cart-count" class="hero-stat-val">0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Bar -->
+    <section class="controls-bar">
+      <div class="search-wrapper">
+        <input type="text" id="search-input" class="search-input" placeholder="Search catalog by name or keyword..." data-test="search-input" />
+      </div>
+
+      <div class="category-pills">
+        <button class="cat-pill active" data-category="All">All</button>
+        <button class="cat-pill" data-category="Audio">Audio</button>
+        <button class="cat-pill" data-category="Workstation">Workstation</button>
+        <button class="cat-pill" data-category="Wearables">Wearables</button>
+        <button class="cat-pill" data-category="Accessories">Accessories</button>
+      </div>
+
+      <div>
+        <select id="sort-select" class="sort-select">
+          <option value="default">Sort by: Featured</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section id="products-grid" class="products-grid">
+      <!-- Dynamic Products Injected via app.js -->
+    </section>
+  </main>
+
+  <!-- QA TESTING CENTER VIEW -->
+  <main id="qa-view" class="container qa-view" style="display: none;">
+    <section class="qa-header">
+      <div class="qa-title-group">
+        <h2>QA Automation & Execution Center</h2>
+        <p>Trigger live dynamic assertions, inspect API responses, and run end-to-end regression test suites against this service.</p>
+      </div>
+      <div class="qa-actions">
+        <button id="btn-run-all-qa" class="btn-run-all">
+          <span>▶ Run All QA Scenarios</span>
+        </button>
+        <button id="btn-run-smoke-qa" class="btn-run-smoke">
+          Run @smoke Only
+        </button>
+        <button id="btn-run-playwright" class="btn-run-smoke" title="Run Playwright CLI against the app">
+          Run Playwright Suite
+        </button>
+      </div>
+    </section>
+
+    <!-- Metrics Cards Grid -->
+    <section class="qa-metrics-grid">
+      <div class="qa-metric-card">
+        <div class="metric-title">Pass Rate</div>
+        <div id="metric-pass-rate" class="metric-num" style="color: var(--aqua-primary);">100%</div>
+        <div class="metric-sub">Across active scenarios</div>
+      </div>
+      <div class="qa-metric-card">
+        <div class="metric-title">Scenarios Passed</div>
+        <div id="metric-tests-count" class="metric-num">7/7</div>
+        <div class="metric-sub">All assertions verified</div>
+      </div>
+      <div class="qa-metric-card">
+        <div class="metric-title">Execution Latency</div>
+        <div id="metric-duration" class="metric-num">38ms</div>
+        <div class="metric-sub">Average roundtrip time</div>
+      </div>
+      <div class="qa-metric-card">
+        <div class="metric-title">Defect Flags</div>
+        <div id="metric-defects" class="metric-num">0</div>
+        <div class="metric-sub">No blocking issues found</div>
+      </div>
+    </section>
+
+    <!-- Console Output for Playwright -->
+    <pre id="playwright-output" style="display: none; background: var(--bg-beige); border: 1px solid var(--border-beige); padding: 16px; border-radius: var(--radius-md); font-size: 0.8rem; font-family: monospace; color: var(--text-charcoal); margin-bottom: 24px; max-height: 240px; overflow-y: auto; white-space: pre-wrap;"></pre>
+
+    <!-- Scenarios List -->
+    <section id="scenarios-container" class="scenarios-list">
+      <!-- Dynamic QA Scenarios Injected via app.js -->
+    </section>
+  </main>
+
+  <!-- Cart & Checkout Modal Backdrop -->
+  <div id="cart-backdrop" class="cart-modal-backdrop">
+    <div class="cart-drawer">
+      <div class="drawer-header">
+        <h3 class="drawer-title">Test Shopping Cart</h3>
+        <button id="cart-close-btn" class="close-btn" aria-label="Close cart">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <div id="drawer-items-list">
+          <!-- Cart items injected via app.js -->
+        </div>
+
+        <div style="margin-top: auto;">
+          <form id="checkout-form" class="checkout-form">
+            <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-black); margin-bottom: 4px;">Simulate Checkout</h4>
+            <input type="text" id="input-first-name" class="form-input" placeholder="First Name (e.g. Ada)" data-test="firstName" required />
+            <input type="text" id="input-last-name" class="form-input" placeholder="Last Name (e.g. Lovelace)" data-test="lastName" required />
+            <input type="text" id="input-postal-code" class="form-input" placeholder="Postal Code (e.g. 520001)" data-test="postalCode" required />
+            
+            <div id="checkout-alert" class="checkout-alert"></div>
+
+            <button type="submit" id="btn-checkout-submit" class="btn-checkout" data-test="checkout-submit">
+              Confirm Test Order
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="drawer-subtotal">$0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>Tier Discount</span>
+          <span id="drawer-discount">-$0.00</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>Total</span>
+          <span id="drawer-total">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Action completed</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "JSON-driven UI and API test automation (Playwright + TypeScript)",
   "scripts": {
+    "start": "node --experimental-strip-types src/server.ts",
+    "dev": "node --experimental-strip-types src/server.ts",
     "test": "playwright test",
     "smoke": "playwright test --grep @smoke",
     "report": "node scripts/summary.mjs"
@@ -13,7 +15,11 @@
   "private": true,
   "devDependencies": {
     "@playwright/test": "^1.65.0",
+    "@types/express": "^5.0.6",
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
   }
 }
