@@ -24,15 +24,16 @@ jobs:
             npx playwright test
           fi
         env:
-          SAUCE_PASS: ${{ secrets.SAUCE_PASS }}
-          BOOKER_USER: ${{ secrets.BOOKER_USER }}
-          BOOKER_PASS: ${{ secrets.BOOKER_PASS }}
+          SAUCE_PASS: ${{ secrets.SAUCE_PASS || 'secret_sauce' }}
+          BOOKER_USER: ${{ secrets.BOOKER_USER || 'admin' }}
+          BOOKER_PASS: ${{ secrets.BOOKER_PASS || 'password123' }}
       - if: always()
         run: npm run report
       - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report
+          if-no-files-found: ignore
           path: |
             playwright-report
             dashboard

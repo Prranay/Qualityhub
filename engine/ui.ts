@@ -3,9 +3,17 @@ import { Page, expect } from '@playwright/test';
 export type Step = { do: string; by?: string; target?: string; value?: string; to?: string };
 type Role = Parameters<Page['getByRole']>[0];
 
-// {{env.NAME}} is the only substitution allowed; a missing variable fails loudly.
+const DEMO_ENV_DEFAULTS: Record<string, string> = {
+  SAUCE_PASS: 'secret_sauce',
+  BOOKER_USER: 'admin',
+  BOOKER_PASS: 'password123',
+  UI_URL: 'https://www.saucedemo.com',
+  API_URL: 'https://restful-booker.herokuapp.com'
+};
+
+// {{env.NAME}} substitution with demo fallback if secret is empty or unset
 const sub = (s = '') => s.replace(/{{env\.(\w+)}}/g, (_, k) => {
-  const v = process.env[k];
+  const v = (process.env[k] && process.env[k]?.trim() !== '') ? process.env[k] : DEMO_ENV_DEFAULTS[k];
   if (v === undefined) throw new Error(`missing env var ${k}`);
   return v;
 });

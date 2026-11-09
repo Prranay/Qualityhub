@@ -7,13 +7,23 @@ export type ApiStep = {
 };
 const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
+const DEMO_ENV_DEFAULTS: Record<string, string> = {
+  BOOKER_USER: 'admin',
+  BOOKER_PASS: 'password123',
+  SAUCE_PASS: 'secret_sauce',
+  API_URL: 'https://restful-booker.herokuapp.com',
+  UI_URL: 'https://www.saucedemo.com'
+};
+
 export async function runApi(request: APIRequestContext, steps: ApiStep[]): Promise<void> {
   // {{rand}} gives unique data per run; saved response fields are added as the steps go.
   const vars: Record<string, string> = { rand: randomUUID().slice(0, 8) };
   // Walks strings, arrays and objects: values are never spliced into JSON text, so no injection.
   const fill = (v: any): any =>
     typeof v === 'string' ? v.replace(/{{(env\.)?(\w+)}}/g, (_, e, k) => {
-      const val = e ? process.env[k] : vars[k];
+      const val = e
+        ? ((process.env[k] && process.env[k]?.trim() !== '') ? process.env[k] : DEMO_ENV_DEFAULTS[k])
+        : vars[k];
       if (val === undefined) throw new Error(`missing {{${e ?? ''}${k}}}`);
       return val;
     })
