@@ -2,6 +2,7 @@
   "name": "qualityhub",
   "version": "1.0.0",
   "description": "JSON-driven UI and API test automation (Playwright + TypeScript)",
+  "type": "module",
   "scripts": {
     "start": "node --experimental-strip-types src/server.ts",
     "dev": "node --experimental-strip-types src/server.ts",

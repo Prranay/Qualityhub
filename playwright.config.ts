@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { join } from 'node:path';
 
-try { process.loadEnvFile(join(__dirname, '.env')); } catch { /* no .env file: use real environment */ }
+try { process.loadEnvFile(join(process.cwd(), '.env')); } catch { /* no .env file: use real environment */ }
 
 export default defineConfig({
   testDir: './tests',

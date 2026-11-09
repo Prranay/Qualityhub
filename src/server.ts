@@ -364,24 +364,27 @@ app.post('/api/run-suite', async (req: Request, res: Response) => {
 // 3. Trigger Local Playwright Automated Runner
 app.post('/api/run-playwright', (req: Request, res: Response) => {
   const { grep } = req.body || {};
-  const cmd = grep ? `npx.cmd playwright test --grep ${grep}` : `npx.cmd playwright test`;
+  const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  const cmd = grep ? `${npxCmd} playwright test --grep ${grep}` : `${npxCmd} playwright test`;
 
   exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
-    let summaryData = null;
-    const summaryPath = join(process.cwd(), 'dashboard', 'summary.json');
-    if (existsSync(summaryPath)) {
-      try {
-        summaryData = JSON.parse(readFileSync(summaryPath, 'utf8'));
-      } catch {}
-    }
+    exec('node scripts/summary.mjs', { cwd: process.cwd() }, () => {
+      let summaryData = null;
+      const summaryPath = join(process.cwd(), 'dashboard', 'summary.json');
+      if (existsSync(summaryPath)) {
+        try {
+          summaryData = JSON.parse(readFileSync(summaryPath, 'utf8'));
+        } catch {}
+      }
 
-    res.json({
-      success: !error,
-      exitCode: error ? error.code : 0,
-      command: cmd,
-      stdout: stdout.slice(-2000),
-      stderr: stderr ? stderr.slice(-600) : null,
-      summary: summaryData
+      res.json({
+        success: !error,
+        exitCode: error ? error.code : 0,
+        command: cmd,
+        stdout: stdout.slice(-2000),
+        stderr: stderr ? stderr.slice(-600) : null,
+        summary: summaryData
+      });
     });
   });
 });
